@@ -20,6 +20,17 @@ namespace MiniProductApiApp.Controllers
             return Ok(Products);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<Models.Product> GetProduct(int id)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
         [HttpPost]
         public ActionResult<Models.Product> CreateProduct(Models.Product product)
         {
