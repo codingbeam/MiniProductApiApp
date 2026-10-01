@@ -24,57 +24,23 @@ jobs:
 
     steps:
 
-      # ---------------------------------------
-      # 1. Checkout source code
-      # ---------------------------------------
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # ---------------------------------------
-      # 2. Setup .NET 10
-      # ---------------------------------------
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
 
-      # ---------------------------------------
-      # 3. Display repository structure
-      # ---------------------------------------
-      - name: Check repository structure
-        run: |
-          echo "Current directory:"
-          pwd
-
-          echo ""
-          echo "Project files:"
-          find . -name "*.csproj" -type f
-
-          echo ""
-          echo "Solution files:"
-          find . -name "*.sln" -o -name "*.slnx"
-
-      # ---------------------------------------
-      # 4. Restore dependencies
-      # ---------------------------------------
       - name: Restore dependencies
-        run: dotnet restore ProductCatalogSolution.slnx
+        run: dotnet restore MiniProductApiApp.slnx
 
-      # ---------------------------------------
-      # 5. Build application
-      # ---------------------------------------
       - name: Build application
-        run: dotnet build ProductCatalogSolution.slnx --no-restore --configuration Release
+        run: dotnet build MiniProductApiApp.slnx --no-restore --configuration Release
 
-      # ---------------------------------------
-      # 6. Run tests
-      # ---------------------------------------
       - name: Run tests
-        run: dotnet test ProductCatalogSolution.slnx --no-build --configuration Release
+        run: dotnet test MiniProductApiApp.slnx --no-build --configuration Release
 
-      # ---------------------------------------
-      # 7. Login to GitHub Container Registry
-      # ---------------------------------------
       - name: Login to GitHub Container Registry
         if: github.event_name == 'push'
         uses: docker/login-action@v3
@@ -83,16 +49,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # ---------------------------------------
-      # 8. Setup Docker Buildx
-      # ---------------------------------------
       - name: Set up Docker Buildx
         if: github.event_name == 'push'
         uses: docker/setup-buildx-action@v3
 
-      # ---------------------------------------
-      # 9. Build and push Docker image
-      # ---------------------------------------
       - name: Build and push Docker image
         if: github.event_name == 'push'
         uses: docker/build-push-action@v6
